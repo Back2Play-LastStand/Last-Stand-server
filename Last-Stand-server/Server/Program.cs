@@ -21,6 +21,8 @@ builder.Services.Configure<JwtSetting>(
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
