@@ -20,4 +20,9 @@ public class PlayerLoginData
     [Column("password")]
     [MaxLength(60)]
     public string Password { get; set; } = null!;
+    
+    [Required]
+    [Column("email")]
+    [MaxLength(255)]
+    public string Email { get; set; } = null!;
 }
