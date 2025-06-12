@@ -6,14 +6,27 @@ using Server.Repository;
 using Server.Service;
 using Server.Repository.Interface;
 using Server.Service.Interface;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: true)
+    .AddUserSecrets<Program>();
 
 builder.Services.Configure<JwtSetting>(
     builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = builder.Configuration.GetSection("Redis:ConnectionString").Value;
+    return ConnectionMultiplexer.Connect(configuration);
+});
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSetting>();
 var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
