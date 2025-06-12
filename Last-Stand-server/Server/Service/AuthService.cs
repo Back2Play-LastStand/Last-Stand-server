@@ -1,4 +1,5 @@
 ﻿using Server.Model.Account.Entity;
+using Server.Model.Token.Dto;
 using Server.Repository.Interface;
 using Server.Service.Interface;
 
@@ -7,10 +8,12 @@ namespace Server.Service;
 public class AuthService : IAuthService
 {
     private readonly IAccountRepository _accountRepository;
+    private readonly IJwtService _jwtService;
 
-    public AuthService(IAccountRepository accountRepository)
+    public AuthService(IAccountRepository accountRepository, IJwtService jwtService)
     {
         _accountRepository = accountRepository;
+        _jwtService = jwtService;
     }
     
     public async Task<bool> RegisterAsync(string playerId, string password)
@@ -30,7 +33,7 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<string?> LoginAsync(string playerId, string password)
+    public async Task<TokenResponse?> LoginAsync(string playerId, string password)
     {
         var account = await _accountRepository.FindByPlayerIdAsync(playerId);
         if (account == null)
@@ -39,7 +42,7 @@ public class AuthService : IAuthService
         if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
             return null;
         
-        // 후에 JWT 토큰 발행
-        return Guid.NewGuid().ToString();
+        var tokens =  _jwtService.GenerateTokens(playerId);
+        return tokens;
     }
 }

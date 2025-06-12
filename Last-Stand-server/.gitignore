@@ -11,3 +11,14 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# 빌드 출력물 무시
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+# Rider / IntelliJ IDEA 설정 무시
+.idea/
+*.iml
