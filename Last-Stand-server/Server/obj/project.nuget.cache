@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "05f1R+6MwlQ=",
+  "dgSpecHash": "Ai8qiwQILAg=",
   "success": true,
   "projectFilePath": "C:\\Users\\USER\\Documents\\GitHub\\Last-Stand-server\\Last-Stand-server\\Server\\Server.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\USER\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\dapper\\2.1.66\\dapper.2.1.66.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.3\\microsoft.aspnetcore.openapi.9.0.3.nupkg.sha512",
     "C:\\Users\\USER\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.2\\microsoft.extensions.dependencyinjection.abstractions.8.0.2.nupkg.sha512",
