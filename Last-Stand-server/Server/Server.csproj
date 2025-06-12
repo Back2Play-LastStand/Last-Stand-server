@@ -12,7 +12,6 @@
 
     <ItemGroup>
       <Folder Include="Controller\" />
-      <Folder Include="Model\Account\Dto\" />
       <Folder Include="Repository\" />
       <Folder Include="Service\" />
     </ItemGroup>
