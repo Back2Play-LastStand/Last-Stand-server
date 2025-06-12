@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mysql://amond-server.kro.kr:3306/박현민</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="0@amond-server.kro.kr" uuid="b0d651c0-7820-4918-a9a3-8a522f17df6a">
+      <driver-ref>redis</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>jdbc.RedisDriver</jdbc-driver>
+      <jdbc-url>jdbc:redis://amond-server.kro.kr:6379/0</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
