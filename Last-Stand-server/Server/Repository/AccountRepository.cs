@@ -48,14 +48,14 @@ public class AccountRepository : IAccountRepository
         return await connection.QuerySingleOrDefaultAsync<PlayerLoginData>(sql, new { PlayerId = playerId });
     }
 
-    public async Task<PlayerLoginData?> FindByEmailAsync(string email)
+    public async Task<string?> FindPlayerIdByEmailAsync(string email)
     {
-        const string sql = "SELECT player_id, email FROM last_stand_player_login_data WHERE email = @Email";
-        
+        const string sql = "SELECT player_id FROM last_stand_player_login_data WHERE email = @Email";
+
         await using var connection = CreateConnection();
         await connection.OpenAsync();
-        
-        return await connection.QuerySingleOrDefaultAsync<PlayerLoginData>(sql, new { Email = email });
+
+        return await connection.QuerySingleOrDefaultAsync<string?>(sql, new { Email = email });
     }
 
     public async Task<PlayerLoginData?> FindByPlayerIdAndEmailAsync(string playerId, string email)
@@ -68,13 +68,13 @@ public class AccountRepository : IAccountRepository
         return await connection.QuerySingleOrDefaultAsync<PlayerLoginData>(sql, new { playerId, Email = email });
     }
 
-    public async Task UpdatePasswordAsync(PlayerLoginData account)
+    public async Task UpdatePasswordAsync(string playerId, string newPassword)
     {
         const string sql = "UPDATE last_stand_player_login_data SET password = @Password WHERE player_id = @PlayerId";
-        
+    
         await using var connection = CreateConnection();
         await connection.OpenAsync();
-    
-        await connection.ExecuteAsync(sql, new { account.Password, account.PlayerId });
+
+        await connection.ExecuteAsync(sql, new { Password = newPassword, PlayerId = playerId });
     }
 }
