@@ -4,6 +4,7 @@ public class PlayerLoginResponse
 {
     public string PlayerId { get; set; } = null!;
     public string Message { get; set; } = string.Empty;
-    
-    // 추후 JWT 토큰 추가
+
+    public string AccessToken { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
 }
