@@ -16,18 +16,19 @@ public class AuthService : IAuthService
         _jwtService = jwtService;
     }
     
-    public async Task<bool> RegisterAsync(string playerId, string password)
+    public async Task<bool> RegisterAsync(string playerId, string password, string email)
     {
-        bool exists = await _accountRepository.CheckExistsAsync(playerId);
+        bool exists = await _accountRepository.CheckExistsAsync(playerId, email);
         if (exists)
             return false;
         
         var hasedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-        await _accountRepository.AddAccountAsynce(new PlayerLoginData
+        await _accountRepository.AddAccountAsync(new PlayerLoginData
         {
             PlayerId = playerId,
-            Password = hasedPassword
+            Password = hasedPassword,
+            Email = email
         });
         
         return true;

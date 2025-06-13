@@ -16,21 +16,21 @@ public class AccountRepository : IAccountRepository
 
     private MySqlConnection CreateConnection() => new(_connectionString);
     
-    public async Task<bool> CheckExistsAsync(string playerId)
+    public async Task<bool> CheckExistsAsync(string playerId,  string email)
     {
-        const string sql = "SELECT COUNT(1) FROM last_stand_player_login_data WHERE player_id = @PlayerId";
+        const string sql = "SELECT COUNT(1) FROM last_stand_player_login_data WHERE player_id = @PlayerId AND email = @Email";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
         
-        var count = await connection.ExecuteScalarAsync<int>(sql, new { PlayerId = playerId });
+        var count = await connection.ExecuteScalarAsync<int>(sql, new { PlayerId = playerId, Email = email });
         
         return count > 0;
     }
 
-    public async Task AddAccountAsynce(PlayerLoginData account)
+    public async Task AddAccountAsync(PlayerLoginData account)
     {
-        const string sql = "INSERT INTO last_stand_player_login_data (player_id, password) VALUES (@PlayerId, @Password)";
+        const string sql = "INSERT INTO last_stand_player_login_data (player_id, password, email) VALUES (@PlayerId, @Password, @Email)";
 
         await using var connection = CreateConnection();
         await connection.OpenAsync();

@@ -19,18 +19,20 @@ namespace Server.Controller
         [HttpPost("register")]
         public async Task<ActionResult<PlayerRegisterResponse>> Register([FromBody] PlayerRegisterRequest req)
         {
-            var success = await _authService.RegisterAsync(req.PlayerId, req.Password);
+            var success = await _authService.RegisterAsync(req.PlayerId, req.Password, req.Email);
             if (!success)
                 return Conflict(new PlayerRegisterResponse
                 {
                     PlayerId = req.PlayerId,
-                    Message = "Id already exists"
+                    Message = "Id already exists",
+                    Email = req.Email
                 });
             
             return Ok(new  PlayerRegisterResponse
             {
                 PlayerId = req.PlayerId,
-                Message = "Register Success"
+                Message = "Register Success",
+                Email = req.Email
             });
         }
 
