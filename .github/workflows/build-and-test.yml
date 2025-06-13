@@ -2,13 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
   pull_request:
-    branches:
-      - main
-      - develop
+    branches: [main, develop]
 
 jobs:
   build-and-test:
@@ -24,10 +20,10 @@ jobs:
         dotnet-version: '9.x'
 
     - name: Restore dependencies
-      run: dotnet restore ./Last-Stand-server.sln
+      run: dotnet restore ./Last-Stand-server/Server/Server.csproj
 
     - name: Build project
-      run: dotnet build ./Last-Stand-server.sln --configuration Release --no-restore
+      run: dotnet build ./Last-Stand-server/Server/Server.csproj --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test ./Last-Stand-server.sln --no-build --verbosity normal
+      run: dotnet test ./Last-Stand-server/Server/Server.csproj --no-build --verbosity normal
