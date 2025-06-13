@@ -21,13 +21,13 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x'
-        
+        dotnet-version: '9.x'
+
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ./Last-Stand-server.sln
 
     - name: Build project
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./Last-Stand-server.sln --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test ./Last-Stand-server.sln --no-build --verbosity normal
