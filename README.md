@@ -8,9 +8,11 @@ Last Stand 서버 저장소입니다.
 - **ASP.NET Core 8**
 - **C#**
 - **Dapper**
+- **MySqlConnection**
 - **BCrypt.Net**
 - **MySQL**
 - **Redis**
+- **JWT**
 - **REST API**
 
 ## 📘 Last Stand API 명세서
