@@ -16,9 +16,9 @@ public class AuthService : IAuthService
         _jwtService = jwtService;
     }
     
-    public async Task<bool> RegisterAsync(string playerId, string password)
+    public async Task<bool> RegisterAsync(string playerId, string password, string email)
     {
-        bool exists = await _accountRepository.CheckExistsAsync(playerId);
+        bool exists = await _accountRepository.CheckExistsAsync(playerId, email);
         if (exists)
             return false;
         
@@ -27,7 +27,8 @@ public class AuthService : IAuthService
         await _accountRepository.AddAccountAsynce(new PlayerLoginData
         {
             PlayerId = playerId,
-            Password = hasedPassword
+            Password = hasedPassword,
+            Email = email
         });
         
         return true;

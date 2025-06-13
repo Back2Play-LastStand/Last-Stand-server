@@ -16,14 +16,14 @@ public class AccountRepository : IAccountRepository
 
     private MySqlConnection CreateConnection() => new(_connectionString);
     
-    public async Task<bool> CheckExistsAsync(string playerId)
+    public async Task<bool> CheckExistsAsync(string playerId,  string email)
     {
-        const string sql = "SELECT COUNT(1) FROM last_stand_player_login_data WHERE player_id = @PlayerId";
+        const string sql = "SELECT COUNT(1) FROM last_stand_player_login_data WHERE player_id = @PlayerId AND email = @Email";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
         
-        var count = await connection.ExecuteScalarAsync<int>(sql, new { PlayerId = playerId });
+        var count = await connection.ExecuteScalarAsync<int>(sql, new { PlayerId = playerId, Email = email });
         
         return count > 0;
     }
