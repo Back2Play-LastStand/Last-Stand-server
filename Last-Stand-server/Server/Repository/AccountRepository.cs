@@ -28,9 +28,9 @@ public class AccountRepository : IAccountRepository
         return count > 0;
     }
 
-    public async Task AddAccountAsynce(PlayerLoginData account)
+    public async Task AddAccountAsync(PlayerLoginData account)
     {
-        const string sql = "INSERT INTO last_stand_player_login_data (player_id, password) VALUES (@PlayerId, @Password)";
+        const string sql = "INSERT INTO last_stand_player_login_data (player_id, password, email) VALUES (@PlayerId, @Password, @Email)";
 
         await using var connection = CreateConnection();
         await connection.OpenAsync();
