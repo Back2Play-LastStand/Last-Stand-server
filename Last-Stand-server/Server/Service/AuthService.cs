@@ -24,7 +24,7 @@ public class AuthService : IAuthService
         
         var hasedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-        await _accountRepository.AddAccountAsynce(new PlayerLoginData
+        await _accountRepository.AddAccountAsync(new PlayerLoginData
         {
             PlayerId = playerId,
             Password = hasedPassword,
