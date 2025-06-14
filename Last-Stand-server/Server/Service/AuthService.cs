@@ -34,16 +34,18 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<TokenResponse?> LoginAsync(string playerId, string password)
+    public async Task<(TokenResponse? Token, bool IsNewAccount)> LoginAsync(string playerId, string password)
     {
         var account = await _accountRepository.FindByPlayerIdAsync(playerId);
-        if (account == null)
-            return null;
+        if (account == null || !BCrypt.Net.BCrypt.Verify(password, account.Password))
+            return (null, false);
         
-        if (!BCrypt.Net.BCrypt.Verify(password, account.Password))
-            return null;
+        var isNewAccount = account.IsNewAccount;
+
+        if (isNewAccount)
+            await _accountRepository.UpdateIsNewAccountAsync(playerId, false);
         
         var tokens =  _jwtService.GenerateTokens(playerId);
-        return tokens;
+        return (tokens,  isNewAccount);
     }
 }
