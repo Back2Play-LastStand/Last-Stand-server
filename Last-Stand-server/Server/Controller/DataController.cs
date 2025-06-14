@@ -24,14 +24,13 @@ namespace Server.Controller
             if (playerData == null)
                 return NotFound(new {Message = "Player Not Found"});
             
-            return Ok(new
+            return Ok(new PlayerDataResponse
             {
                 PlayerName = playerData.PlayerName,
-                Message = $"Player Name: {playerData.PlayerName}"
             });
         }
 
-        [HttpPost(("name"))]
+        [HttpPost("name")]
         public async Task<ActionResult<PlayerDataResponse?>> SavePlayerName([FromBody] PlayerDataRequest req)
         {
             if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
@@ -44,7 +43,6 @@ namespace Server.Controller
             if (existingData != null)
             {
                 existingData.PlayerName = req.PlayerName;
-                existingData.IsNewAccount = false;
                 await _dataService.AddPlayerDataAsync(existingData);
             }
             else
@@ -53,7 +51,6 @@ namespace Server.Controller
                 {
                     PlayerId = req.PlayerId,
                     PlayerName = req.PlayerName,
-                    IsNewAccount = true
                 };
                 await _dataService.AddPlayerDataAsync(newData);
             }
