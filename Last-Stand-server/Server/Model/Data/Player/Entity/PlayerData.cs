@@ -20,7 +20,4 @@ public class PlayerData
     [Column("player_name")]
     [MaxLength(50)]
     public string PlayerName { get; set; } = null!;
-
-    [Required] [Column("is_new_account")]
-    public bool IsNewAccount { get; set; }
 }

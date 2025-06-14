@@ -25,4 +25,7 @@ public class PlayerLoginData
     [Column("email")]
     [MaxLength(255)]
     public string Email { get; set; } = null!;
+
+    [Required] [Column("is_new_account")]
+    public bool IsNewAccount { get; set; }
 }
