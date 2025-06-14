@@ -32,9 +32,9 @@ public class AccountService : IAccountService
         return true;
     }
 
-    public Task<PlayerLoginData?> GetPlayerLoginDataByPlayerIdAsync(string playerId)
+    public async Task<PlayerLoginData?> GetPlayerLoginDataByPlayerIdAsync(string playerId)
     {
-        return _accountRepository.GetPlayerLoginDataByPlayerIdAsync(playerId);
+        return await _accountRepository.GetPlayerLoginDataByPlayerIdAsync(playerId);
     }
 
     public async Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount)
