@@ -28,7 +28,7 @@ jobs:
       - name: Check for tracked ignored files
         run: |
           echo "Checking for tracked ignored files..."
-          git ls-files -i --exclude-standard > .tracked-ignored.txt
+          git ls-files -i -c --exclude-standard > .tracked-ignored.txt
           if [ -s .tracked-ignored.txt ]; then
             echo "Tracked files that are listed in .gitignore detected:"
             cat .tracked-ignored.txt
