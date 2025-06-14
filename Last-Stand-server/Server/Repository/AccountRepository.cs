@@ -28,6 +28,22 @@ public class AccountRepository : IAccountRepository
         return count > 0;
     }
 
+    public async Task<bool> CheckIsNewAccountByPlayerIdAsync(string playerId)
+    {
+        const string sql = @"
+            SELECT is_new_account
+            FROM last_stand_player_login_data
+            WHERE player_id = @PlayerId
+            LIMIT 1;";
+        
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+        
+        var isNewAccount = await connection.QueryFirstOrDefaultAsync<bool?>(sql, new { PlayerId = playerId });
+
+        return isNewAccount ?? false;
+    }
+
     public async Task AddAccountAsync(PlayerLoginData account)
     {
         const string sql = "INSERT INTO last_stand_player_login_data (player_id, password, email) VALUES (@PlayerId, @Password, @Email)";

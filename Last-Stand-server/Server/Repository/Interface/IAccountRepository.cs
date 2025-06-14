@@ -5,6 +5,7 @@ namespace Server.Repository.Interface;
 public interface IAccountRepository
 {
     Task<bool> CheckExistsAsync(string playerId, string email);
+    Task<bool> CheckIsNewAccountByPlayerIdAsync(string playerId);
     Task AddAccountAsync(PlayerLoginData account);
     Task<PlayerLoginData?> FindByPlayerIdAsync(string playerId);
     Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount);
