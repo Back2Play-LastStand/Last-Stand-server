@@ -8,4 +8,5 @@ public interface IAccountService
     Task<bool> ResetPasswordAsync(string playerId, string email, string newPassword);
     Task<PlayerLoginData?> GetPlayerLoginDataByPlayerIdAsync(string playerId);
     Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount);
+    Task<bool?> CheckIsNewAccountByPlayerIdAsync(string playerId);
 }

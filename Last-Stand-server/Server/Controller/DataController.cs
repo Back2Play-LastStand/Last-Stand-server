@@ -41,7 +41,15 @@ namespace Server.Controller
             if (await _dataService.IsNameTakenAsync(req.PlayerName))
                 return Conflict(new { message = "PlayerName is already taken." });
 
-            var loginData = _accountService.GetPlayerLoginDataByPlayerIdAsync(req.PlayerId);
+            var isNewAccount = await _accountService.CheckIsNewAccountByPlayerIdAsync(req.PlayerId);
+
+            if (isNewAccount == null)
+                return NotFound(new { message = "Player Not Found" });
+
+            if (isNewAccount == false)
+                return Conflict(new { message = "This account is not New" });
+
+            var loginData = await _accountService.GetPlayerLoginDataByPlayerIdAsync(req.PlayerId);
             if (loginData == null)
                 return NotFound(new { message = "Player Not Found" });
             

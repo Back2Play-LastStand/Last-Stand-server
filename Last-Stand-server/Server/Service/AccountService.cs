@@ -41,4 +41,9 @@ public class AccountService : IAccountService
     {
         await _accountRepository.UpdateIsNewAccountAsync(playerId, isNewAccount);
     }
+
+    public async Task<bool?> CheckIsNewAccountByPlayerIdAsync(string playerId)
+    {
+        return await _accountRepository.CheckIsNewAccountByPlayerIdAsync(playerId);
+    }
 }
