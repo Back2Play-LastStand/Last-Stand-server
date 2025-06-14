@@ -89,4 +89,18 @@ public class AccountRepository : IAccountRepository
 
         await connection.ExecuteAsync(sql, new { Password = newPassword, PlayerId = playerId });
     }
+
+    public async Task<PlayerLoginData?> GetPlayerLoginDataByPlayerIdAsync(string playerId)
+    {
+        const string query = @"
+        SELECT id, player_id, password, email, is_new_account
+        FROM last_stand_player_login_data
+        WHERE player_id = @PlayerId
+        LIMIT 1";
+
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        return await connection.QueryFirstOrDefaultAsync<PlayerLoginData>(query, new { PlayerId = playerId });
+    }
 }

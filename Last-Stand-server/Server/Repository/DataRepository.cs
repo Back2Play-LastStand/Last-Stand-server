@@ -19,9 +19,10 @@ public class DataRepository : IDataRepository
     public async Task<PlayerData?> GetByPlayerIdAsync(string playerId)
     {
         const string sql = @"
-            SELECT id, player_id AS PlayerId, player_name AS PlayerName, is_new_account AS IsNewAccount
-            FROM last_stand_player_data
-            WHERE player_id = @PlayerId;
+            SELECT  D.player_id AS PlayerId, D.player_name AS PlayerName, L.is_new_account AS IsNewAccount
+            FROM last_stand_player_data D
+            JOIN last_stand_player_login_data L ON D.player_id = L.player_id
+            WHERE D.player_id = @playerId
         ";
         using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -44,17 +45,22 @@ public class DataRepository : IDataRepository
         return count > 0;
     }
 
-    public async Task AddPlayerDataAsync(PlayerData data)
+    public async Task AddPlayerDataAsync(PlayerData data, bool isNewAccount)
     {
         const string sql = @"
-        INSERT INTO last_stand_player_data (player_id, player_name, is_new_account)
-        VALUES (@PlayerId, @PlayerName, @IsNewAccount);
+        INSERT INTO last_stand_player_data (player_id, player_name)
+        VALUES (@PlayerId, @PlayerName);
     ";
         
         using var connection = CreateConnection();
         await connection.OpenAsync();
 
-        await connection.ExecuteAsync(sql, data);
+        await connection.ExecuteAsync(sql, new
+        {
+            data.PlayerId,
+            data.PlayerName,
+            IsNewAccount = isNewAccount
+        });
     }
 
     public async Task UpdatePlayerNameAndIsNewAccountAsync(string playerId, string playerName, bool isNewAccount)
@@ -62,7 +68,6 @@ public class DataRepository : IDataRepository
         const string sql = @"
         UPDATE last_stand_player_data
         SET player_name = @PlayerName,
-            is_new_account = @IsNewAccount
         WHERE player_id = @PlayerId;
         ";
         

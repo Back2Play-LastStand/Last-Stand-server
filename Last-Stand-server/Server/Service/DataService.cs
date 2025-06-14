@@ -23,9 +23,9 @@ public class DataService : IDataService
         return await _dataRepository.GetByPlayerIdAsync(playerId);
     }
 
-    public async Task AddPlayerDataAsync(PlayerData data)
+    public async Task AddPlayerDataAsync(PlayerData data, bool isNewAccount)
     {
-        await _dataRepository.AddPlayerDataAsync(data);
+        await _dataRepository.AddPlayerDataAsync(data, isNewAccount);
     }
 
     public async Task UpdatePlayerNameAndIsNewAccountAsync(string playerId, string playerName, bool isNewAccount)

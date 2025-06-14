@@ -1,4 +1,5 @@
-﻿using Server.Repository.Interface;
+﻿using Server.Model.Account.Entity;
+using Server.Repository.Interface;
 using Server.Service.Interface;
 
 namespace Server.Service;
@@ -29,5 +30,15 @@ public class AccountService : IAccountService
         await _accountRepository.UpdatePasswordAsync(playerId, newHashedPassword);
         
         return true;
+    }
+
+    public Task<PlayerLoginData?> GetPlayerLoginDataByPlayerIdAsync(string playerId)
+    {
+        return _accountRepository.GetPlayerLoginDataByPlayerIdAsync(playerId);
+    }
+
+    public async Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount)
+    {
+        await _accountRepository.UpdateIsNewAccountAsync(playerId, isNewAccount);
     }
 }
