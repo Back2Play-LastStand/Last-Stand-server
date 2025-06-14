@@ -28,6 +28,22 @@ public class AccountRepository : IAccountRepository
         return count > 0;
     }
 
+    public async Task<bool> CheckIsNewAccountByPlayerIdAsync(string playerId)
+    {
+        const string sql = @"
+            SELECT is_new_account
+            FROM last_stand_player_login_data
+            WHERE player_id = @PlayerId
+            LIMIT 1;";
+        
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+        
+        var isNewAccount = await connection.QueryFirstOrDefaultAsync<bool?>(sql, new { PlayerId = playerId });
+
+        return isNewAccount ?? false;
+    }
+
     public async Task AddAccountAsync(PlayerLoginData account)
     {
         const string sql = "INSERT INTO last_stand_player_login_data (player_id, password, email) VALUES (@PlayerId, @Password, @Email)";
@@ -40,12 +56,24 @@ public class AccountRepository : IAccountRepository
 
     public async Task<PlayerLoginData?> FindByPlayerIdAsync(string playerId)
     {
-        const string sql = "SELECT player_id, password FROM last_stand_player_login_data WHERE player_id = @PlayerId";
+        const string sql = @"SELECT  id, player_id AS PlayerId, password AS Password, email, is_new_account AS IsNewAccount
+                            FROM last_stand_player_login_data 
+                            WHERE player_id = @PlayerId;";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
         
         return await connection.QuerySingleOrDefaultAsync<PlayerLoginData>(sql, new { PlayerId = playerId });
+    }
+
+    public async Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount)
+    {
+        const string sql = "UPDATE last_stand_player_login_data SET is_new_account = @IsNewAccount WHERE player_id = @PlayerId";
+        
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+        
+        await connection.ExecuteAsync(sql, new { IsNewAccount = isNewAccount, PlayerId = playerId });
     }
 
     public async Task<string?> FindPlayerIdByEmailAsync(string email)
@@ -76,5 +104,19 @@ public class AccountRepository : IAccountRepository
         await connection.OpenAsync();
 
         await connection.ExecuteAsync(sql, new { Password = newPassword, PlayerId = playerId });
+    }
+
+    public async Task<PlayerLoginData?> GetPlayerLoginDataByPlayerIdAsync(string playerId)
+    {
+        const string query = @"
+        SELECT id, player_id, password, email, is_new_account
+        FROM last_stand_player_login_data
+        WHERE player_id = @PlayerId
+        LIMIT 1";
+
+        await using var connection = new MySqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        return await connection.QueryFirstOrDefaultAsync<PlayerLoginData>(query, new { PlayerId = playerId });
     }
 }

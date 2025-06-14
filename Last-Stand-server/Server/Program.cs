@@ -22,6 +22,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IDataService, DataService>();
+builder.Services.AddScoped<IDataRepository, DataRepository>();
 
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
