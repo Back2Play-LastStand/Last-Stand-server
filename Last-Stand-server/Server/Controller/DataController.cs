@@ -42,15 +42,14 @@ namespace Server.Controller
             var existingData = await _dataService.GetByPlayerIdAsync(req.PlayerId);
             if (existingData != null)
             {
-                existingData.PlayerName = req.PlayerName;
-                await _dataService.AddPlayerDataAsync(existingData);
+                await _dataService.UpdatePlayerNameAndIsNewAccountAsync(req.PlayerId, req.PlayerName, false);
             }
             else
             {
                 var newData = new PlayerData
                 {
                     PlayerId = req.PlayerId,
-                    PlayerName = req.PlayerName,
+                    PlayerName = req.PlayerName
                 };
                 await _dataService.AddPlayerDataAsync(newData);
             }

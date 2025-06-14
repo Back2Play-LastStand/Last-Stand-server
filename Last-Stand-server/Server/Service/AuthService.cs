@@ -41,9 +41,6 @@ public class AuthService : IAuthService
             return (null, false);
         
         var isNewAccount = account.IsNewAccount;
-
-        if (isNewAccount)
-            await _accountRepository.UpdateIsNewAccountAsync(playerId, false);
         
         var tokens =  _jwtService.GenerateTokens(playerId);
         return (tokens,  isNewAccount);

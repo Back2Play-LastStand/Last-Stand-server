@@ -7,4 +7,5 @@ public interface IDataService
     Task<bool> IsNameTakenAsync(string playerName);
     Task<PlayerData?> GetByPlayerIdAsync(string playerId);
     Task AddPlayerDataAsync(PlayerData data);
+    Task UpdatePlayerNameAndIsNewAccountAsync (string playerId, string playerName, bool isNewAccount);
 }

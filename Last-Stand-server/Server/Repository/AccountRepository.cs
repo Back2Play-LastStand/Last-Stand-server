@@ -40,7 +40,9 @@ public class AccountRepository : IAccountRepository
 
     public async Task<PlayerLoginData?> FindByPlayerIdAsync(string playerId)
     {
-        const string sql = "SELECT * FROM last_stand_player_login_data WHERE player_id = @PlayerId";
+        const string sql = @"SELECT  id, player_id AS PlayerId, password AS Password, email, is_new_account AS IsNewAccount
+                            FROM last_stand_player_login_data 
+                            WHERE player_id = @PlayerId;";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -50,7 +52,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount)
     {
-        const string sql = "UPDATE last_stand_player_login_data SET  is_new_account = @IsNewAccount WHERE player_id = @PlayerId";
+        const string sql = "UPDATE last_stand_player_login_data SET is_new_account = @IsNewAccount WHERE player_id = @PlayerId";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
