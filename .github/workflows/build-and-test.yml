@@ -7,23 +7,53 @@ on:
     branches: [main, develop]
 
 jobs:
-  build-and-test:
+  conflict-check:
+    name: Check for Merge Conflicts
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout PR branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '9.x'
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.base_ref }}
 
-    - name: Restore dependencies
-      run: dotnet restore ./Last-Stand-server/Server/Server.csproj
+      - name: Try to merge base into PR branch
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git merge --no-commit --no-ff origin/${{ github.base_ref }} || echo "MERGE_CONFLICT" > conflict.txt
 
-    - name: Build project
-      run: dotnet build ./Last-Stand-server/Server/Server.csproj --configuration Release --no-restore
+      - name: Fail if conflict exists
+        run: |
+          if [ -f conflict.txt ]; then
+            echo "❌ Merge conflict detected with ${{ github.base_ref }}"
+            exit 1
+          else
+            echo "✅ No merge conflict"
+          fi
 
-    - name: Run tests
-      run: dotnet test ./Last-Stand-server/Server/Server.csproj --no-build --verbosity normal
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: conflict-check
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./Last-Stand-server/Server/Server.csproj
+
+      - name: Build project
+        run: dotnet build ./Last-Stand-server/Server/Server.csproj --configuration Release --no-restore
+
+      - name: Run tests
+        run: dotnet test ./Last-Stand-server/Server/Server.csproj --no-build --verbosity normal
