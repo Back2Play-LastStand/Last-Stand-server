@@ -30,10 +30,10 @@ jobs:
       - name: Fail if conflict exists
         run: |
           if [ -f conflict.txt ]; then
-            echo "❌ Merge conflict detected with ${{ github.base_ref }}"
+            echo "Merge conflict detected with ${{ github.base_ref }}"
             exit 1
           else
-            echo "✅ No merge conflict"
+            echo "No merge conflict"
           fi
 
   build-and-test:
