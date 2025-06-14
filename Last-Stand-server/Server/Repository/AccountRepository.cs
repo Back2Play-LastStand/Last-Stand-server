@@ -55,7 +55,7 @@ public class AccountRepository : IAccountRepository
         await using var connection = CreateConnection();
         await connection.OpenAsync();
         
-        await connection.ExecuteAsync(sql, new { IsNewAccount = isNewAccount, playerId = playerId });
+        await connection.ExecuteAsync(sql, new { IsNewAccount = isNewAccount, PlayerId = playerId });
     }
 
     public async Task<string?> FindPlayerIdByEmailAsync(string email)
