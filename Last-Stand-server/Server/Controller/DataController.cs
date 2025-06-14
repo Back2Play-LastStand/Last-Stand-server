@@ -11,13 +11,15 @@ namespace Server.Controller
     public class DataController : ControllerBase
     {
         private readonly IDataService _dataService;
+        private readonly IAccountService _accountService;
 
-        public DataController(IDataService dataService)
+        public DataController(IDataService dataService,  IAccountService accountService)
         {
             _dataService = dataService;
+            _accountService = accountService;
         }
 
-        [HttpGet("{playerId}/name")]
+        [HttpGet("name/{playerId}")]
         public async Task<ActionResult<PlayerDataResponse?>> GetPlayerDataAsync(string  playerId)
         {
             var playerData = await _dataService.GetByPlayerIdAsync(playerId);
@@ -31,30 +33,32 @@ namespace Server.Controller
         }
 
         [HttpPost("name")]
-        public async Task<ActionResult<PlayerDataResponse?>> SavePlayerName([FromBody] PlayerDataRequest req)
+        public async Task<ActionResult<PlayerDataResponse>> AddPlayerName([FromBody] PlayerDataRequest req)
         {
             if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
                 return BadRequest(new { message = "PlayerId and PlayerName are required." });
-            
+
             if (await _dataService.IsNameTakenAsync(req.PlayerName))
                 return Conflict(new { message = "PlayerName is already taken." });
+
+            var loginData = _accountService.GetPlayerLoginDataByPlayerIdAsync(req.PlayerId);
+            if (loginData == null)
+                return NotFound(new { message = "Player Not Found" });
             
-            var existingData = await _dataService.GetByPlayerIdAsync(req.PlayerId);
-            if (existingData != null)
+            var newData = new PlayerData
             {
-                await _dataService.UpdatePlayerNameAndIsNewAccountAsync(req.PlayerId, req.PlayerName, false);
-            }
-            else
+                PlayerId = req.PlayerId,
+                PlayerName = req.PlayerName
+            };
+
+            await _dataService.AddPlayerDataAsync(newData, false);
+            await _accountService.UpdateIsNewAccountAsync(req.PlayerId, false);
+
+            return Ok(new PlayerDataResponse
             {
-                var newData = new PlayerData
-                {
-                    PlayerId = req.PlayerId,
-                    PlayerName = req.PlayerName
-                };
-                await _dataService.AddPlayerDataAsync(newData);
-            }
-            
-            return Ok(new PlayerDataResponse { PlayerId = req.PlayerId, PlayerName = req.PlayerName });
+                PlayerId = req.PlayerId,
+                PlayerName = req.PlayerName
+            });
         }
     }
 }
