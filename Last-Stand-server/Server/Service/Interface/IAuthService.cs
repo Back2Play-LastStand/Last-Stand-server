@@ -6,5 +6,5 @@ namespace Server.Service.Interface;
 public interface IAuthService
 {
     Task<bool> RegisterAsync(string playerId, string password, string email);
-    Task<TokenResponse?> LoginAsync(string playerId, string password);
+    Task<(TokenResponse? Token, bool IsNewAccount)> LoginAsync(string playerId, string password);
 }
