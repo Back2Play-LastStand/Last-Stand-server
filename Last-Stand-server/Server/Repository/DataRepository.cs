@@ -62,18 +62,4 @@ public class DataRepository : IDataRepository
             IsNewAccount = isNewAccount
         });
     }
-
-    public async Task UpdatePlayerNameAndIsNewAccountAsync(string playerId, string playerName, bool isNewAccount)
-    {
-        const string sql = @"
-        UPDATE last_stand_player_data
-        SET player_name = @PlayerName,
-        WHERE player_id = @PlayerId;
-        ";
-        
-        using var connection = CreateConnection();
-        await connection.OpenAsync();
-        
-        await connection.ExecuteAsync(sql, new { PlayerId = playerId, PlayerName = playerName, IsNewAccount = isNewAccount });
-    }
 }
