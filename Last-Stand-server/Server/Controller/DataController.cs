@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Server.Model.Account.Dto.Response;
 using Server.Model.Data.Player.Dto.Request;
 using Server.Model.Data.Player.Dto.Response;
 using Server.Model.Data.Player.Entity;
@@ -19,14 +20,14 @@ namespace Server.Controller
             _accountService = accountService;
         }
 
-        [HttpGet("name/{playerId}")]
-        public async Task<ActionResult<PlayerDataResponse?>> GetPlayerDataAsync(string  playerId)
+        [HttpGet("name")]
+        public async Task<ActionResult<PlayerNameResponse?>> GetPlayerDataAsync([FromQuery] string  playerId)
         {
             var playerData = await _dataService.GetByPlayerIdAsync(playerId);
             if (playerData == null)
                 return NotFound(new {Message = "Player Not Found"});
             
-            return Ok(new PlayerDataResponse
+            return Ok(new PlayerNameResponse
             {
                 PlayerName = playerData.PlayerName,
             });
