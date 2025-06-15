@@ -38,13 +38,13 @@ public class SessionRepository : ISessionRepository
         return await connection.QueryFirstOrDefaultAsync<AccountSession>(sql, new { SessionId = sessionId });
     }
 
-    public async Task DeleteSessionAsync(string sessionId)
+    public async Task DeleteExpiredSessionsAsync()
     {
         const string sql = @"
-            DELETE FROM account_session
-            WHERE session_id = @SessionId";
+        DELETE FROM account_session
+        WHERE expires_at <= UTC_TIMESTAMP()";
         
         await using var connection = CreateConnection();
-        await connection.ExecuteAsync(sql, new { SessionId = sessionId });
+        await connection.ExecuteAsync(sql);
     }
 }

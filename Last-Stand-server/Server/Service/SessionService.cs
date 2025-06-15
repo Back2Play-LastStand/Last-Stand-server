@@ -38,9 +38,4 @@ public class SessionService :  ISessionService
         var session = await _sessionRepository.GetValidSessionAsync(sessionId);
         return session?.AccountId.ToString();
     }
-
-    public async Task DeleteSessionAsync(string sessionId)
-    {
-        await _sessionRepository.DeleteSessionAsync(sessionId);
-    }
 }
