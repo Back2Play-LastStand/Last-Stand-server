@@ -1,7 +1,4 @@
-﻿using Server.Model.Account.Entity;
-using Server.Model.Token.Dto;
-
-namespace Server.Service.Interface;
+﻿namespace Server.Service.Interface;
 
 public interface IAuthService
 {
