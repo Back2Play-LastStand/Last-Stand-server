@@ -15,12 +15,8 @@ builder.Configuration
     .AddJsonFile("appsettings.json", optional: true)
     .AddUserSecrets<Program>();
 
-builder.Services.Configure<JwtSetting>(
-    builder.Configuration.GetSection("JwtSettings"));
-
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IDataRepository, DataRepository>();
@@ -31,29 +27,6 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     var configuration = builder.Configuration.GetSection("Redis:ConnectionString").Value;
     return ConnectionMultiplexer.Connect(configuration);
 });
-
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSetting>();
-var key = Encoding.UTF8.GetBytes(jwtSettings.SecretKey);
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            ValidIssuer = jwtSettings.Issuer,
-            ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(key)
-        };
-    });
 
 builder.Services.AddControllers();
 
