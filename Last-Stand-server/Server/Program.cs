@@ -18,6 +18,7 @@ builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IDataRepository, DataRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddHostedService<SessionCleanupService>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
