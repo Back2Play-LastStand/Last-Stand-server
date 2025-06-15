@@ -9,7 +9,7 @@ public class AccountSession
     [Key]
     [Column("session_id")]
     [MaxLength(64)]
-    public string SessionId { get; set; } = Guid.NewGuid().ToString();
+    public string SessionId { get; set; } = null!;
     
     [Required]
     [Column("account_id")]
