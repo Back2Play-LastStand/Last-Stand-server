@@ -13,16 +13,16 @@ public class SessionService :  ISessionService
         _sessionRepository = sessionRepository;
     }
     
-    public async Task<string> CreateSessionAsync(string playerId)
+    public async Task<string> CreateSessionAsync(int accountId)
     {
         var session = new AccountSession
         {
             SessionId = Guid.NewGuid().ToString(),
-            AccountId = int.Parse(playerId),
+            AccountId = accountId,
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddHours(2)
         };
-        
+    
         await _sessionRepository.CreateSessionAsync(session);
         return session.SessionId;
     }
