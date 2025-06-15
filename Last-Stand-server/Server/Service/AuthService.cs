@@ -36,9 +36,7 @@ public class AuthService : IAuthService
         var account = await _accountRepository.FindByPlayerIdAsync(playerId);
         if (account == null || !BCrypt.Net.BCrypt.Verify(password, account.Password))
             return (false, false);
-        
-        var isNewAccount = account.IsNewAccount;
-        
-        return (true,  isNewAccount);
+
+        return (true, account.IsNewAccount);
     }
 }

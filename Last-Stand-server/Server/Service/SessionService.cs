@@ -17,9 +17,12 @@ public class SessionService :  ISessionService
     
     public async Task<string> CreateSessionAsync(string playerId)
     {
-        var account = await _accountRepository.FindByPlayerIdAsync(playerId);
-        if (account == null)
-            throw new ArgumentException("Invalid playerId");
+        var account = await _accountRepository.FindByPlayerIdAsync(playerId)
+                      ?? throw new ArgumentException("Invalid playerId");
+
+        var existingSession = await _sessionRepository.HasValidSessionByAccountIdAsync(account.Id);
+        if (existingSession)
+            throw new InvalidOperationException("Session already exists for this account.");
         
         var session = new AccountSession
         {

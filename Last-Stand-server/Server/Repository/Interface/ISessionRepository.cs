@@ -6,5 +6,6 @@ public interface ISessionRepository
 {
     Task CreateSessionAsync(AccountSession session);
     Task<AccountSession?> GetValidSessionAsync(string sessionId);
+    Task<bool> HasValidSessionByAccountIdAsync(int accountId);
     Task DeleteExpiredSessionsAsync();
 }

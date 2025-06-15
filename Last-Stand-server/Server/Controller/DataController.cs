@@ -56,6 +56,7 @@ namespace Server.Controller
             
             var newData = new PlayerData
             {
+                Id = loginData.Id,
                 PlayerId = req.PlayerId,
                 PlayerName = req.PlayerName
             };

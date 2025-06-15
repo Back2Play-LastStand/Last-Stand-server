@@ -4,13 +4,13 @@ namespace Server.Service;
 
 public class SessionCleanupService : IHostedService, IDisposable
 {
-    private readonly ISessionRepository _sessionRepository;
+    private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<SessionCleanupService> _logger;
     private Timer? _timer;
 
-    public SessionCleanupService(ISessionRepository sessionRepository, ILogger<SessionCleanupService> logger)
+    public SessionCleanupService(IServiceScopeFactory scopeFactory, ILogger<SessionCleanupService> logger)
     {
-        _sessionRepository = sessionRepository;
+        _scopeFactory = scopeFactory;
         _logger = logger;
     }
     
@@ -27,8 +27,11 @@ public class SessionCleanupService : IHostedService, IDisposable
     {
         try
         {
+            using var scope = _scopeFactory.CreateScope();
+            var sessionRepository = scope.ServiceProvider.GetRequiredService<ISessionRepository>();
+            
             _logger.LogInformation("Deleting expired sessions...");
-            await _sessionRepository.DeleteExpiredSessionsAsync();
+            await sessionRepository.DeleteExpiredSessionsAsync();
             _logger.LogInformation("Expired sessions deleted.");
         }
         catch (Exception ex)

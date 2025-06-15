@@ -38,11 +38,22 @@ public class SessionRepository : ISessionRepository
         return await connection.QueryFirstOrDefaultAsync<AccountSession>(sql, new { SessionId = sessionId });
     }
 
+    public async Task<bool> HasValidSessionByAccountIdAsync(int accountId)
+    {
+        const string sql = @"
+            SELECT COUNT(*) FROM account_session
+            WHERE account_id = @AccountId AND expires_at > UTC_TIMESTAMP()";
+        
+        await using var connection = CreateConnection();
+        var count = await connection.ExecuteScalarAsync<int>(sql, new { AccountId = accountId });
+        return count > 0;
+    }
+
     public async Task DeleteExpiredSessionsAsync()
     {
         const string sql = @"
-        DELETE FROM account_session
-        WHERE expires_at <= UTC_TIMESTAMP()";
+            DELETE FROM account_session
+            WHERE expires_at <= UTC_TIMESTAMP()";
         
         await using var connection = CreateConnection();
         await connection.ExecuteAsync(sql);

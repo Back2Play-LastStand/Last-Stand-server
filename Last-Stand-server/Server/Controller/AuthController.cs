@@ -51,15 +51,27 @@ namespace Server.Controller
                 });
             }
 
-            var sessionId = await _sessionService.CreateSessionAsync(req.PlayerId);
-            
-            return Ok(new PlayerLoginResponse
+            try
             {
-                PlayerId = req.PlayerId,
-                IsNewAccount = isNewAccount,
-                SessionId = sessionId,
-                Message = "Login successful"
-            });
+                var sessionId = await _sessionService.CreateSessionAsync(req.PlayerId);
+
+                return Ok(new PlayerLoginResponse
+                {
+                    PlayerId = req.PlayerId,
+                    IsNewAccount = isNewAccount,
+                    SessionId = sessionId,
+                    Message = "Login successful"
+                });
+            }
+            catch (InvalidOperationException)
+            {
+                return Conflict(new PlayerLoginResponse
+                {
+                    PlayerId = req.PlayerId,
+                    IsNewAccount = isNewAccount,
+                    Message = "Already logged in"
+                });
+            }
         }
     }
 }

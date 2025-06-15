@@ -48,8 +48,8 @@ public class DataRepository : IDataRepository
     public async Task AddPlayerDataAsync(PlayerData data, bool isNewAccount)
     {
         const string sql = @"
-        INSERT INTO player_data (player_id, player_name)
-        VALUES (@PlayerId, @PlayerName);
+            INSERT INTO player_data (account_id, player_id, player_name)
+            VALUES (@AccountId, @PlayerId, @PlayerName);
     ";
         
         using var connection = CreateConnection();
@@ -57,8 +57,9 @@ public class DataRepository : IDataRepository
 
         await connection.ExecuteAsync(sql, new
         {
-            data.PlayerId,
-            data.PlayerName,
+            AccountId = data.Id,
+            PlayerId = data.PlayerId,
+            PlayerName = data.PlayerName,
             IsNewAccount = isNewAccount
         });
     }
