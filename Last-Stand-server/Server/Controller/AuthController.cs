@@ -52,8 +52,6 @@ namespace Server.Controller
             return Ok(new PlayerLoginResponse
             {
                 PlayerId = req.PlayerId,
-                AccessToken = token.AccessToken,
-                RefreshToken = token.RefreshToken,
                 IsNewAccount = isNewAccount,
                 Message = "Login successful"
             });

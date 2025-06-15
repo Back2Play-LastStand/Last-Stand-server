@@ -1,5 +1,4 @@
 ﻿using Server.Model.Account.Entity;
-using Server.Model.Token.Dto;
 using Server.Repository.Interface;
 using Server.Service.Interface;
 
@@ -36,10 +35,10 @@ public class AuthService : IAuthService
     {
         var account = await _accountRepository.FindByPlayerIdAsync(playerId);
         if (account == null || !BCrypt.Net.BCrypt.Verify(password, account.Password))
-            return (null, false);
+            return (false, false);
         
         var isNewAccount = account.IsNewAccount;
         
-        return (tokens,  isNewAccount);
+        return (true,  isNewAccount);
     }
 }
