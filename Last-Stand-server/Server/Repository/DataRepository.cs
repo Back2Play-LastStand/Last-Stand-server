@@ -11,7 +11,7 @@ public class DataRepository : IDataRepository
 
     public DataRepository(IConfiguration config)
     {
-        _connectionString = config.GetConnectionString("DefaultConnection");
+        _connectionString = config.GetConnectionString("GameDataDbConnection");
     }
 
     private MySqlConnection CreateConnection() => new(_connectionString);
@@ -20,8 +20,8 @@ public class DataRepository : IDataRepository
     {
         const string sql = @"
             SELECT  D.player_id AS PlayerId, D.player_name AS PlayerName, L.is_new_account AS IsNewAccount
-            FROM last_stand_player_data D
-            JOIN last_stand_player_login_data L ON D.player_id = L.player_id
+            FROM player_data D
+            JOIN last_stand_account_data.player_account_data L ON D.player_id = L.player_id
             WHERE D.player_id = @playerId
         ";
         using var connection = CreateConnection();
@@ -34,7 +34,7 @@ public class DataRepository : IDataRepository
     {
         const string sql = @"
             SELECT COUNT(1)
-            FROM last_stand_player_data
+            FROM player_data
             WHERE player_name = @PlayerName;
         ";
 
@@ -48,7 +48,7 @@ public class DataRepository : IDataRepository
     public async Task AddPlayerDataAsync(PlayerData data, bool isNewAccount)
     {
         const string sql = @"
-        INSERT INTO last_stand_player_data (player_id, player_name)
+        INSERT INTO player_data (player_id, player_name)
         VALUES (@PlayerId, @PlayerName);
     ";
         
