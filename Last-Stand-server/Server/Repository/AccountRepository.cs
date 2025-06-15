@@ -11,14 +11,14 @@ public class AccountRepository : IAccountRepository
 
     public AccountRepository(IConfiguration config)
     {
-        _connectionString = config.GetConnectionString("DefaultConnection");
+        _connectionString = config.GetConnectionString("AccountDbConnection");
     }
 
     private MySqlConnection CreateConnection() => new(_connectionString);
     
     public async Task<bool> CheckExistsAsync(string playerId,  string email)
     {
-        const string sql = "SELECT COUNT(1) FROM last_stand_player_login_data WHERE player_id = @PlayerId AND email = @Email";
+        const string sql = "SELECT COUNT(1) FROM player_account_data WHERE player_id = @PlayerId AND email = @Email";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -32,7 +32,7 @@ public class AccountRepository : IAccountRepository
     {
         const string sql = @"
             SELECT is_new_account
-            FROM last_stand_player_login_data
+            FROM player_account_data
             WHERE player_id = @PlayerId
             LIMIT 1;";
         
@@ -46,7 +46,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task AddAccountAsync(PlayerLoginData account)
     {
-        const string sql = "INSERT INTO last_stand_player_login_data (player_id, password, email) VALUES (@PlayerId, @Password, @Email)";
+        const string sql = "INSERT INTO player_account_data (player_id, password, email) VALUES (@PlayerId, @Password, @Email)";
 
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -57,7 +57,7 @@ public class AccountRepository : IAccountRepository
     public async Task<PlayerLoginData?> FindByPlayerIdAsync(string playerId)
     {
         const string sql = @"SELECT  id, player_id AS PlayerId, password AS Password, email, is_new_account AS IsNewAccount
-                            FROM last_stand_player_login_data 
+                            FROM player_account_data 
                             WHERE player_id = @PlayerId;";
         
         await using var connection = CreateConnection();
@@ -68,7 +68,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount)
     {
-        const string sql = "UPDATE last_stand_player_login_data SET is_new_account = @IsNewAccount WHERE player_id = @PlayerId";
+        const string sql = "UPDATE player_account_data SET is_new_account = @IsNewAccount WHERE player_id = @PlayerId";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -78,7 +78,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task<string?> FindPlayerIdByEmailAsync(string email)
     {
-        const string sql = "SELECT player_id FROM last_stand_player_login_data WHERE email = @Email";
+        const string sql = "SELECT player_id FROM player_account_data WHERE email = @Email";
 
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -88,7 +88,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task<PlayerLoginData?> FindByPlayerIdAndEmailAsync(string playerId, string email)
     {
-        const string sql = "SELECT * FROM last_stand_player_login_data WHERE player_id = @PlayerId AND email = @Email";
+        const string sql = "SELECT * FROM player_account_data WHERE player_id = @PlayerId AND email = @Email";
         
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -98,7 +98,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task UpdatePasswordAsync(string playerId, string newPassword)
     {
-        const string sql = "UPDATE last_stand_player_login_data SET password = @Password WHERE player_id = @PlayerId";
+        const string sql = "UPDATE player_account_data SET password = @Password WHERE player_id = @PlayerId";
     
         await using var connection = CreateConnection();
         await connection.OpenAsync();
@@ -110,7 +110,7 @@ public class AccountRepository : IAccountRepository
     {
         const string query = @"
         SELECT id, player_id, password, email, is_new_account
-        FROM last_stand_player_login_data
+        FROM player_account_data
         WHERE player_id = @PlayerId
         LIMIT 1";
 

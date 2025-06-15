@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Model.Data.Player.Entity;
 
-[Table("last_stand_player_data")]
+[Table("player_data")]
 public class PlayerData
 {
     [Key]
     [Required]
-    [Column("id")]
+    [Column("account_id")]
     public int Id { get; set; }
     
     [Required]

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Model.Account.Entity;
 
-[Table("last_stand_player_login_data")]
+[Table("player_account_data")]
 public class PlayerLoginData
 {
     [Key]
