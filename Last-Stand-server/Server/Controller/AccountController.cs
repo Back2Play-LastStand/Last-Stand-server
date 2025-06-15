@@ -16,17 +16,17 @@ namespace Server.Controller
             _accountService = accountService;
         }
 
-        [HttpPost("find-playerid")]
-        public async Task<ActionResult<FindPlayerIdResponse>> FindPlayerId([FromBody] FindPlayerIdRequest req)
+        [HttpPost("player-id")]
+        public async Task<ActionResult<FindPlayerIdResponse>> FindPlayerId([FromQuery] string email)
         {
-            var playerId = await _accountService.FindPlayerIdByEmailAsync(req.Email);
+            var playerId = await _accountService.FindPlayerIdByEmailAsync(email);
             if (playerId == null)
                 return NotFound(new FindPlayerIdResponse { PlayerId = null });
             
-            return Ok(new  FindPlayerIdResponse {PlayerId = playerId});
+            return Ok(new  FindPlayerIdResponse { PlayerId = playerId });
         }
 
-        [HttpPatch("reset-password")]
+        [HttpPatch("password")]
         public async Task<ActionResult<ResetPasswordResponse>> ResetPassword([FromBody] ResetPasswordRequest req)
         {
             var success = await _accountService.ResetPasswordAsync(req.PlayerId, req.Email, req.NewPassword);
