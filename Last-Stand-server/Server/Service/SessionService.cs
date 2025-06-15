@@ -39,6 +39,10 @@ public class SessionService :  ISessionService
     public async Task<string?> GetPlayerIdBySessionIdAsync(string sessionId)
     {
         var session = await _sessionRepository.GetValidSessionAsync(sessionId);
-        return session?.AccountId.ToString();
+        if (session == null)
+            return null;
+        
+        var account = await _accountRepository.GetPlayerLoginDataByIdAsync(session.AccountId);
+        return account?.PlayerId;
     }
 }
