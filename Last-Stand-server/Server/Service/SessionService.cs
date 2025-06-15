@@ -1,21 +1,40 @@
-﻿using Server.Service.Interface;
+﻿using Server.Model.Account.Entity;
+using Server.Repository.Interface;
+using Server.Service.Interface;
 
 namespace Server.Service;
 
 public class SessionService :  ISessionService
 {
-    public async Task<long> CreateSessionAsync(string playerId)
+    private readonly ISessionRepository _sessionRepository;
+
+    public SessionService(ISessionRepository sessionRepository)
     {
-        throw new NotImplementedException();
+        _sessionRepository = sessionRepository;
+    }
+    
+    public async Task<string> CreateSessionAsync(string playerId)
+    {
+        var session = new AccountSession
+        {
+            SessionId = Guid.NewGuid().ToString(),
+            AccountId = int.Parse(playerId),
+            CreatedAt = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.AddHours(2)
+        };
+        
+        await _sessionRepository.CreateSessionAsync(session);
+        return session.SessionId;
     }
 
     public async Task<string?> GetPlayerIdBySessionIdAsync(string sessionId)
     {
-        throw new NotImplementedException();
+        var session = await _sessionRepository.GetValidSessionAsync(sessionId);
+        return session?.AccountId.ToString();
     }
 
     public async Task DeleteSessionAsync(string sessionId)
     {
-        throw new NotImplementedException();
+        await _sessionRepository.DeleteSessionAsync(sessionId);
     }
 }

@@ -2,7 +2,7 @@
 
 public interface ISessionService
 {
-    Task<long> CreateSessionAsync(string playerId);
+    Task<string> CreateSessionAsync(string playerId);
     Task<string?> GetPlayerIdBySessionIdAsync(string sessionId);
     Task DeleteSessionAsync(string sessionId);
 }
