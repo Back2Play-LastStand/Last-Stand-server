@@ -16,7 +16,7 @@ namespace Server.Controller
             _accountService = accountService;
         }
 
-        [HttpPost("player-id")]
+        [HttpGet("player-id")]
         public async Task<ActionResult<FindPlayerIdResponse>> FindPlayerId([FromQuery] string email)
         {
             var playerId = await _accountService.FindPlayerIdByEmailAsync(email);
