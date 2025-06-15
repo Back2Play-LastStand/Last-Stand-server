@@ -21,7 +21,7 @@ Last Stand 서버 저장소입니다.
 
 ### 🔍 플레이어 ID 찾기
 
-- **URL**: `POST /api/account/find-playerid`
+- **URL**: `POST /api/account/player-id?email=test@example.com`
 - **설명**: 이메일을 통해 플레이어 ID를 조회합니다.
 - **요청 바디**:
 
@@ -53,7 +53,7 @@ Last Stand 서버 저장소입니다.
 
 ### 🔐 비밀번호 재설정
 
-- **URL**: `PATCH /api/account/reset-password`
+- **URL**: `PATCH /api/account/password`
 - **설명**:  playerId와 이메일이 일치하면 비밀번호를 재설정합니다.
 - **요청 바디**:
 
