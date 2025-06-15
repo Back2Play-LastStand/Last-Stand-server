@@ -10,10 +10,12 @@ namespace Server.Controller
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ISessionService _sessionService;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService,  ISessionService sessionService)
         {
             _authService = authService;
+            _sessionService = sessionService;
         }
 
         [HttpPost("register")]
@@ -39,8 +41,8 @@ namespace Server.Controller
         [HttpPost("login")]
         public async Task<ActionResult<PlayerLoginResponse>> Login([FromBody] PlayerLoginRequest req)
         {
-            var (token, isNewAccount) = await _authService.LoginAsync(req.PlayerId, req.Password);
-            if (token == null)
+            var (isSuccess, isNewAccount) = await _authService.LoginAsync(req.PlayerId, req.Password);
+            if (!isSuccess)
             {
                 return Unauthorized(new PlayerLoginResponse
                 {
@@ -48,11 +50,14 @@ namespace Server.Controller
                     Message = "Login Failed"
                 });
             }
+
+            var sessionId = await _sessionService.CreateSessionAsync(req.PlayerId);
             
             return Ok(new PlayerLoginResponse
             {
                 PlayerId = req.PlayerId,
                 IsNewAccount = isNewAccount,
+                SessionId = sessionId,
                 Message = "Login successful"
             });
         }
