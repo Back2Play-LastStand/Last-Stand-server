@@ -1,7 +1,3 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Server.Configuration;
 using Server.Repository;
 using Server.Service;
 using Server.Repository.Interface;
@@ -20,7 +16,6 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IDataService, DataService>();
 builder.Services.AddScoped<IDataRepository, DataRepository>();
-
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
