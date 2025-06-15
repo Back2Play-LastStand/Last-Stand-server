@@ -7,22 +7,28 @@ namespace Server.Service;
 public class SessionService :  ISessionService
 {
     private readonly ISessionRepository _sessionRepository;
+    private readonly IAccountRepository _accountRepository;
 
-    public SessionService(ISessionRepository sessionRepository)
+    public SessionService(ISessionRepository sessionRepository,  IAccountRepository accountRepository)
     {
         _sessionRepository = sessionRepository;
+        _accountRepository = accountRepository;
     }
     
-    public async Task<string> CreateSessionAsync(int accountId)
+    public async Task<string> CreateSessionAsync(string playerId)
     {
+        var account = await _accountRepository.FindByPlayerIdAsync(playerId);
+        if (account == null)
+            throw new ArgumentException("Invalid playerId");
+        
         var session = new AccountSession
         {
             SessionId = Guid.NewGuid().ToString(),
-            AccountId = accountId,
+            AccountId = account.Id,
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddHours(2)
         };
-    
+        
         await _sessionRepository.CreateSessionAsync(session);
         return session.SessionId;
     }
