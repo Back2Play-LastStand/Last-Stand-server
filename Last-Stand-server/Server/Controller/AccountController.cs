@@ -40,8 +40,11 @@ namespace Server.Controller
             [FromBody] ResetPasswordRequest req,
             [FromServices] IConnectionMultiplexer redis)
         {
-            var isMatched = _accountService.CheckPlayerIdExistsAsync(req.PlayerId);
-            if (req.PlayerId == null)
+            if (string.IsNullOrWhiteSpace(req.PlayerId))
+                return NotFound(new { message = "PlayerId is required." });
+            
+            var isMatched = await _accountService.CheckPlayerIdExistsAsync(req.PlayerId);
+            if (!isMatched)
                 return NotFound(new {message = "Player not found."});
             
             var redisDb = redis.GetDatabase();
@@ -57,8 +60,7 @@ namespace Server.Controller
 
             await redisDb.KeyDeleteAsync(key);
 
-            return Ok(new ResetPasswordResponse { Success = true, Message = "Password has been reset successfully." });
+            return Ok(new ResetPasswordResponse { Success = true, Message = "Password has been changed successfully." });
         }
     }
-
 }
