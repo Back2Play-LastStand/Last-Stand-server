@@ -31,7 +31,7 @@ public class EmailService :  IEmailService
         message.Subject = subject;
         
         message.Body = new TextPart("html") {
-            Text = $"<p>Last Stand 인증코드는 <span style=\"font-size:24px; font-weight:bold;\">{body}</span> 입니다.</p>"
+            Text = $"<p>Last Stand 인증코드는 <span style=\"font-size:24px; font-weight:bold;\">{body}</span> 입니다 (3분 유효).</p>"
         };
         
         using var client = new SmtpClient();

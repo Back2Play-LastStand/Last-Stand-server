@@ -11,17 +11,13 @@ namespace Server.Controller
     {
         private readonly IVerificationService _verificationService;
         private readonly IEmailService _emailService;
-        private readonly IDatabase _redis;
-        private readonly TimeSpan _verifiedFlagExpiration = TimeSpan.FromHours(3);
 
         public VerifyController(
             IVerificationService verificationService,
-            IEmailService emailService,
-            IConnectionMultiplexer redis)
+            IEmailService emailService)
         {
             _verificationService = verificationService;
             _emailService = emailService;
-            _redis = redis.GetDatabase();
         }
 
         [HttpPost("send")]
