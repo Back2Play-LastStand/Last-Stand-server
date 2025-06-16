@@ -133,4 +133,16 @@ public class AccountRepository : IAccountRepository
         
         return await connection.QueryFirstOrDefaultAsync<PlayerLoginData>(sql, new { Id = id });    
     }
+
+    public async Task<bool> CheckPlayerIdExistsAsync(string playerId)
+    {
+        const string sql = "SELECT COUNT(1) FROM player_account_data WHERE player_id = @PlayerId";
+
+        await using var connection = CreateConnection();
+        await connection.OpenAsync();
+
+        var count = await connection.ExecuteScalarAsync<int>(sql, new { PlayerId = playerId });
+
+        return count > 0;
+    }
 }

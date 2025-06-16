@@ -59,4 +59,9 @@ public class SessionService :  ISessionService
         
         return account?.Id;
     }
+
+    public async Task DeleteSessionAsync(string sessionId)
+    {
+        await _sessionRepository.DeleteSessionsAsync(sessionId);
+    }
 }

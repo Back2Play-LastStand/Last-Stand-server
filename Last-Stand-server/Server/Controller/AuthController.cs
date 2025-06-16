@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Server.DefinedException;
 using Server.Model.Account.Dto.Request;
 using Server.Model.Account.Dto.Response;
 using Server.Service.Interface;
@@ -21,22 +22,55 @@ namespace Server.Controller
         [HttpPost("register")]
         public async Task<ActionResult<PlayerRegisterResponse>> Register([FromBody] PlayerRegisterRequest req)
         {
-            var success = await _authService.RegisterAsync(req.PlayerId, req.Password, req.Email);
-            if (!success)
+            try
+            {
+                var success = await _authService.RegisterAsync(req.PlayerId, req.Password, req.Email);
+                if (!success)
+                {
+                    return Conflict(new PlayerRegisterResponse
+                    {
+                        PlayerId = req.PlayerId,
+                        Message = "Register failed for unknown reason",
+                        Email = req.Email
+                    });
+                }
+
+                return Ok(new PlayerRegisterResponse
+                {
+                    PlayerId = req.PlayerId,
+                    Message = "Register Success",
+                    Email = req.Email
+                });
+            }
+            catch (DuplicatePlayerIdException)
+            {
                 return Conflict(new PlayerRegisterResponse
                 {
                     PlayerId = req.PlayerId,
-                    Message = "Id already exists",
+                    Message = "PlayerId already exists",
                     Email = req.Email
                 });
-            
-            return Ok(new  PlayerRegisterResponse
+            }
+            catch (DuplicateEmailException)
             {
-                PlayerId = req.PlayerId,
-                Message = "Register Success",
-                Email = req.Email
-            });
+                return Conflict(new PlayerRegisterResponse
+                {
+                    PlayerId = req.PlayerId,
+                    Message = "Email already exists",
+                    Email = req.Email
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new PlayerRegisterResponse
+                {
+                    PlayerId = req.PlayerId,
+                    Message = "Internal server error: " + ex.Message,
+                    Email = req.Email
+                });
+            }
         }
+
 
         [HttpPost("login")]
         public async Task<ActionResult<PlayerLoginResponse>> Login([FromBody] PlayerLoginRequest req)
@@ -72,6 +106,17 @@ namespace Server.Controller
                     Message = "Already logged in"
                 });
             }
+        }
+
+        [HttpDelete("logout")]
+        public async Task<IActionResult> Logout([FromQuery] string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+                return BadRequest("SessionId is empty");
+            
+            await _sessionService.DeleteSessionAsync(sessionId);
+
+            return Ok(new {message = "Logout succeed"});
         }
     }
 }
