@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Controller\" />
+    <Folder Include="Model\Verify\Dto\Response\" />
   </ItemGroup>
 
 </Project>
