@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+    ports:
+      - "5075:5075"
+      - "7102:7102"
+    environment:
+      - Smtp__Pass=${SMTP_PASS}
+      - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
+      - ConnectionStrings__GameDataDbConnection=Server=db;Database=last_stand_game_data;User Id=${GAMEDB_USER};Password=${GAMEDB_PASS}
+      - ConnectionStrings__AccountDbConnection=Server=db;Database=last_stand_account_data;User Id=${ACCOUNTDB_USER};Password=${ACCOUNTDB_PASS}
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: ${GAMEDB_PASS}
+      MYSQL_DATABASE: last_stand_game_data
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
