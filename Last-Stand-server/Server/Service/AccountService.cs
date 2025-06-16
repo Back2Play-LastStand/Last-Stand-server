@@ -37,6 +37,11 @@ public class AccountService : IAccountService
         return await _accountRepository.GetPlayerLoginDataByPlayerIdAsync(playerId);
     }
 
+    public async Task<PlayerLoginData?> GetPlayerLoginDataByIdAsync(int id)
+    {
+        return await _accountRepository.GetPlayerLoginDataByIdAsync(id);
+    }
+
     public async Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount)
     {
         await _accountRepository.UpdateIsNewAccountAsync(playerId, isNewAccount);

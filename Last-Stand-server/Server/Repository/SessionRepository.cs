@@ -31,11 +31,24 @@ public class SessionRepository : ISessionRepository
     public async Task<AccountSession?> GetValidSessionAsync(string sessionId)
     {
         const string sql = @"
-            SELECT * FROM account_session
+            SELECT 
+                session_id AS SessionId, 
+                account_id AS AccountId, 
+                created_at AS CreatedAt, 
+                expires_at AS ExpiresAt 
+            FROM account_session
             WHERE session_id = @SessionId AND expires_at > UTC_TIMESTAMP()";
         
         await using var connection  = CreateConnection();
-        return await connection.QueryFirstOrDefaultAsync<AccountSession>(sql, new { SessionId = sessionId });
+        
+        var session = await connection.QueryFirstOrDefaultAsync<AccountSession>(sql, new { SessionId = sessionId });
+        
+        if (session != null)
+            Console.WriteLine($"Session found: SessionId={session.SessionId}, AccountId={session.AccountId}");
+        else
+            Console.WriteLine("Session not found or expired.");
+        
+        return session;
     }
 
     public async Task<bool> HasValidSessionByAccountIdAsync(int accountId)
