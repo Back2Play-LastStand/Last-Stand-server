@@ -40,26 +40,19 @@ namespace Server.Controller
             [FromServices] IAccountService accountService)
         {
             if (!Request.Headers.TryGetValue("Session-Id", out var sessionId))
-                return Unauthorized(new {message = "Session Id Is Not Found"});
-            
+                return Unauthorized(new { message = "Session Id Is Not Found" });
+
             var accountId = await sessionService.GetAccountIdBySessionIdAsync(sessionId);
             if (accountId == null)
                 return Unauthorized(new { message = "Invalid or expired session." });
-            
-            Console.WriteLine($"AccountId from session: {accountId}");
 
             var playerData = await accountService.GetPlayerLoginDataByIdAsync(accountId.Value);
-            if (playerData == null)
-                return Unauthorized(new { message = "Player not found for this session." });
-            
-            Console.WriteLine($"PlayerId from account service: {playerData.PlayerId}");
-
-            if (req.PlayerId != playerData.PlayerId)
+            if (playerData == null || req.PlayerId != playerData.PlayerId)
                 return Unauthorized(new { message = "Session does not match player." });
 
             if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
                 return BadRequest(new { message = "PlayerId and PlayerName are required." });
-                    
+
             if (await _dataService.IsNameTakenAsync(req.PlayerName))
                 return Conflict(new { message = "PlayerName is already taken." });
 
@@ -73,7 +66,7 @@ namespace Server.Controller
             var loginData = await _accountService.GetPlayerLoginDataByPlayerIdAsync(req.PlayerId);
             if (loginData == null)
                 return NotFound(new { message = "Player Not Found" });
-            
+
             var newData = new PlayerData
             {
                 Id = loginData.Id,
@@ -90,5 +83,6 @@ namespace Server.Controller
                 PlayerName = req.PlayerName
             });
         }
+
     }
 }
