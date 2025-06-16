@@ -10,4 +10,5 @@ public interface IAccountService
     Task<PlayerLoginData?> GetPlayerLoginDataByIdAsync(int id);
     Task UpdateIsNewAccountAsync(string playerId, bool isNewAccount);
     Task<bool?> CheckIsNewAccountByPlayerIdAsync(string playerId);
+    Task<bool> CheckPlayerIdExistsAsync(string playerId);
 }
