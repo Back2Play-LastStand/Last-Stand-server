@@ -14,4 +14,5 @@ public interface IAccountRepository
     Task UpdatePasswordAsync(string playerId, string newPassword);
     Task<PlayerLoginData> GetPlayerLoginDataByPlayerIdAsync(string playerId);
     Task<PlayerLoginData?> GetPlayerLoginDataByIdAsync(int id);
+    Task<bool> CheckPlayerIdExistsAsync(string playerId);
 }
