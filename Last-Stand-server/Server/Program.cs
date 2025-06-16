@@ -19,6 +19,8 @@ builder.Services.AddScoped<IDataRepository, DataRepository>();
 builder.Services.AddScoped<ISessionRepository, SessionRepository>();
 builder.Services.AddScoped<ISessionService, SessionService>();
 builder.Services.AddHostedService<SessionCleanupService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IVerificationService, VerificationService>();
 
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
