@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Model.Account.Dto.Response;
+using Server.Model.Account.Entity;
 using Server.Model.Data.Player.Dto.Request;
 using Server.Model.Data.Player.Dto.Response;
 using Server.Model.Data.Player.Entity;
@@ -21,15 +22,22 @@ namespace Server.Controller
         }
 
         [HttpGet("name")]
-        public async Task<ActionResult<PlayerNameResponse?>> GetPlayerDataAsync([FromQuery] string  playerId)
+        public async Task<ActionResult<PlayerNameResponse?>> GetPlayerDataAsync(
+            [FromQuery] string  playerId,
+            [FromServices] ISessionService sessionService,
+            [FromServices] IAccountService accountService)
         {
-            var playerData = await _dataService.GetByPlayerIdAsync(playerId);
-            if (playerData == null)
+            var (isSuccess, errorResult, playerData) = await ValidateSessionAndGetPlayerAsync(playerId, sessionService, accountService);
+            if (!isSuccess)
+                return errorResult!;
+            
+            var data = await _dataService.GetByPlayerIdAsync(playerId);
+            if (data == null)
                 return NotFound(new {Message = "Player Not Found"});
             
             return Ok(new PlayerNameResponse
             {
-                PlayerName = playerData.PlayerName,
+                PlayerName = data.PlayerName,
             });
         }
 
@@ -39,16 +47,9 @@ namespace Server.Controller
             [FromServices] ISessionService sessionService,
             [FromServices] IAccountService accountService)
         {
-            if (!Request.Headers.TryGetValue("Session-Id", out var sessionId))
-                return Unauthorized(new { message = "Session Id Is Not Found" });
-
-            var accountId = await sessionService.GetAccountIdBySessionIdAsync(sessionId);
-            if (accountId == null)
-                return Unauthorized(new { message = "Invalid or expired session." });
-
-            var playerData = await accountService.GetPlayerLoginDataByIdAsync(accountId.Value);
-            if (playerData == null || req.PlayerId != playerData.PlayerId)
-                return Unauthorized(new { message = "Session does not match player." });
+            var (isSuccess, errorResult, playerData) = await ValidateSessionAndGetPlayerAsync(req.PlayerId, sessionService, accountService);
+            if (!isSuccess)
+                return errorResult!;
 
             if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
                 return BadRequest(new { message = "PlayerId and PlayerName are required." });
@@ -84,5 +85,21 @@ namespace Server.Controller
             });
         }
 
+        private async Task<(bool IsSuccess, ActionResult? ErrorResult, PlayerLoginData? PlayerData)>
+            ValidateSessionAndGetPlayerAsync(string playerId,ISessionService sessionService, IAccountService accountService)
+        {
+            if (!Request.Headers.TryGetValue("Session-Id", out var sessionId))
+                return (false, Unauthorized(new { Message = "Session Id Is Not Found" }), null);
+
+            var accountId = await sessionService.GetAccountIdBySessionIdAsync(sessionId);
+            if (accountId == null)
+                return (false, Unauthorized(new { Message = "Invalid or expired session." }), null);
+
+            var playerData = await accountService.GetPlayerLoginDataByIdAsync(accountId.Value);
+            if (playerData == null || playerData.PlayerId != playerId)
+                return (false, Unauthorized(new { Message = "Session does not match player." }), null);
+
+            return (true, null, playerData);
+        }
     }
 }
