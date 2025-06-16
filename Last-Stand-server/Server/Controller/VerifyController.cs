@@ -31,7 +31,7 @@ namespace Server.Controller
 
             await _verificationService.StoreVerificationCodeAsync(email, code);
 
-            var subject = "[내 서비스] 이메일 인증코드";
+            var subject = "[Last Stand] 이메일 인증코드";
             var body = code;
             await _emailService.SendAsync(email, subject, body);
 
