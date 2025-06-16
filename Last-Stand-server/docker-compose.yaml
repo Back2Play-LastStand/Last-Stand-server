@@ -4,7 +4,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: Server/Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "5075:5075"
       - "7102:7102"
