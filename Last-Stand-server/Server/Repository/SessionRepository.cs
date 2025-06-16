@@ -71,4 +71,14 @@ public class SessionRepository : ISessionRepository
         await using var connection = CreateConnection();
         await connection.ExecuteAsync(sql);
     }
+
+    public async Task DeleteSessionsAsync(string sessionId)
+    {
+        const string sql = @"
+            DELETE FROM account_session
+            WHERE session_id = @SessionId";
+        
+        await using var connection = CreateConnection();
+        await connection.ExecuteAsync(sql, new{ SessionId = sessionId });
+    }
 }

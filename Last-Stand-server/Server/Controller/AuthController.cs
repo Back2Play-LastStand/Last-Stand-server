@@ -107,5 +107,16 @@ namespace Server.Controller
                 });
             }
         }
+
+        [HttpDelete("logout")]
+        public async Task<IActionResult> Logout([FromQuery] string sessionId)
+        {
+            if (string.IsNullOrEmpty(sessionId))
+                return BadRequest("SessionId is empty");
+            
+            await _sessionService.DeleteSessionAsync(sessionId);
+
+            return Ok(new {message = "Logout succeed"});
+        }
     }
 }
