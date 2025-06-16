@@ -19,6 +19,7 @@ obj/
 *.pdb
 *.cache
 *.log
+*.env
 # Rider / IntelliJ IDEA 설정 무시
 .idea/
 *.iml
