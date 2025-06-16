@@ -39,6 +39,24 @@ public class SessionService :  ISessionService
     public async Task<string?> GetPlayerIdBySessionIdAsync(string sessionId)
     {
         var session = await _sessionRepository.GetValidSessionAsync(sessionId);
-        return session?.AccountId.ToString();
+        if (session == null)
+            return null;
+        
+        var account = await _accountRepository.GetPlayerLoginDataByIdAsync(session.AccountId);
+        return account?.PlayerId;
+    }
+
+    public async Task<int?> GetAccountIdBySessionIdAsync(string sessionId)
+    {
+        var session = await _sessionRepository.GetValidSessionAsync(sessionId);
+        if (session == null)
+            return null;
+        
+        var account = await _accountRepository.GetPlayerLoginDataByIdAsync(session.AccountId);
+        if (account == null)
+            throw new Exception($"No player found with AccountId = {session.AccountId}");
+
+        
+        return account?.Id;
     }
 }
