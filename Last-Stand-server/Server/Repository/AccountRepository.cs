@@ -123,10 +123,10 @@ public class AccountRepository : IAccountRepository
     public async Task<PlayerLoginData?> GetPlayerLoginDataByIdAsync(int id)
     {
         const string sql = @"
-        SELECT id, player_id, password, email, is_new_account
-        FROM player_account_data
-        WHERE id = @Id
-        LIMIT 1";
+            SELECT id, player_id AS PlayerId, password AS Password, email, is_new_account AS IsNewAccount
+            FROM player_account_data
+            WHERE id = @Id
+            LIMIT 1;";
         
         await using var connection = new MySqlConnection(_connectionString);
         await connection.OpenAsync();

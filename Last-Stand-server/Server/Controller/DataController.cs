@@ -34,16 +34,36 @@ namespace Server.Controller
         }
 
         [HttpPost("name")]
-        public async Task<ActionResult<PlayerDataResponse>> AddPlayerName([FromBody] PlayerDataRequest req)
+        public async Task<ActionResult<PlayerDataResponse>> AddPlayerName(
+            [FromBody] PlayerDataRequest req,
+            [FromServices] ISessionService sessionService,
+            [FromServices] IAccountService accountService)
         {
+            if (!Request.Headers.TryGetValue("Session-Id", out var sessionId))
+                return Unauthorized(new {message = "Session Id Is Not Found"});
+            
+            var accountId = await sessionService.GetAccountIdBySessionIdAsync(sessionId);
+            if (accountId == null)
+                return Unauthorized(new { message = "Invalid or expired session." });
+            
+            Console.WriteLine($"AccountId from session: {accountId}");
+
+            var playerData = await accountService.GetPlayerLoginDataByIdAsync(accountId.Value);
+            if (playerData == null)
+                return Unauthorized(new { message = "Player not found for this session." });
+            
+            Console.WriteLine($"PlayerId from account service: {playerData.PlayerId}");
+
+            if (req.PlayerId != playerData.PlayerId)
+                return Unauthorized(new { message = "Session does not match player." });
+
             if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
                 return BadRequest(new { message = "PlayerId and PlayerName are required." });
-
+                    
             if (await _dataService.IsNameTakenAsync(req.PlayerName))
                 return Conflict(new { message = "PlayerName is already taken." });
 
             var isNewAccount = await _accountService.CheckIsNewAccountByPlayerIdAsync(req.PlayerId);
-
             if (isNewAccount == null)
                 return NotFound(new { message = "Player Not Found" });
 
