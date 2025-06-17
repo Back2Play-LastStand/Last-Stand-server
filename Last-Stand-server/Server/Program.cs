@@ -6,6 +6,8 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls(Environment.GetEnvironmentVariable("ASPNETCORE_URLS") ?? "http://0.0.0.0:5075");
+
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: true)
