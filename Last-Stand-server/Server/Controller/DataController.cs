@@ -47,12 +47,12 @@ namespace Server.Controller
             [FromServices] ISessionService sessionService,
             [FromServices] IAccountService accountService)
         {
+            if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
+                return BadRequest(new { message = "PlayerId and PlayerName are required." });
+            
             var (isSuccess, errorResult, playerData) = await ValidateSessionAndGetPlayerAsync(req.PlayerId, sessionService, accountService);
             if (!isSuccess)
                 return errorResult!;
-
-            if (string.IsNullOrWhiteSpace(req.PlayerId) || string.IsNullOrWhiteSpace(req.PlayerName))
-                return BadRequest(new { message = "PlayerId and PlayerName are required." });
 
             if (await _dataService.IsNameTakenAsync(req.PlayerName))
                 return Conflict(new { message = "PlayerName is already taken." });

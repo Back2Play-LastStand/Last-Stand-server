@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5075:5075"
+      - "7102:7102"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:5075
+      - Smtp__Pass=${SMTP_PASS}
+      - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
+      - ConnectionStrings__GameDataDbConnection=Server=db;Database=last_stand_game_data;User Id=${GAMEDB_USER};Password=${GAMEDB_PASS}
+      - ConnectionStrings__AccountDbConnection=Server=db;Database=last_stand_account_data;User Id=${ACCOUNTDB_USER};Password=${ACCOUNTDB_PASS}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
