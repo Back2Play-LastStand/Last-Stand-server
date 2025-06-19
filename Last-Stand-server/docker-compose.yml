@@ -25,8 +25,19 @@ services:
       - "7102:7102"
     environment:
       - ASPNETCORE_URLS=http://0.0.0.0:5075
+
+      # SMTP 환경변수
+      - Smtp__Host=smtp.gmail.com
+      - Smtp__Port=587
+      - Smtp__User=lstand566@gmail.com
       - Smtp__Pass=${SMTP_PASS}
+      - Smtp__FromEmail=lstand566@gmail.com
+      - Smtp__FromName=Last-Stand
+
+      # Redis 환경변수
       - Redis__ConnectionString=${REDIS_CONNECTIONSTRING}
+
+      # DB 연결 문자열 (비밀번호, 사용자 등은 .env에서 주입)
       - ConnectionStrings__GameDataDbConnection=Server=db;Database=last_stand_game_data;User Id=${GAMEDB_USER};Password=${GAMEDB_PASS}
       - ConnectionStrings__AccountDbConnection=Server=db;Database=last_stand_account_data;User Id=${ACCOUNTDB_USER};Password=${ACCOUNTDB_PASS}
     depends_on:
