@@ -64,4 +64,14 @@ public class SessionService :  ISessionService
     {
         await _sessionRepository.DeleteSessionsAsync(sessionId);
     }
+    
+    public async Task DeleteSessionByPlayerIdAsync(string playerId)
+    {
+        var account = await _accountRepository.FindByPlayerIdAsync(playerId);
+        if (account == null)
+            throw new ArgumentException($"No account found with PlayerId = {playerId}");
+
+        await _sessionRepository.DeleteSessionsByAccountIdAsync(account.Id);
+    }
+
 }
