@@ -85,8 +85,10 @@ namespace Server.Controller
                 });
             }
 
+            
             try
             {
+                await _sessionService.DeleteSessionByPlayerIdAsync(req.PlayerId);
                 var sessionId = await _sessionService.CreateSessionAsync(req.PlayerId);
 
                 return Ok(new PlayerLoginResponse

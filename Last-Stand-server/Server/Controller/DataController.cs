@@ -22,7 +22,7 @@ namespace Server.Controller
         }
 
         [HttpGet("name")]
-        public async Task<ActionResult<PlayerNameResponse?>> GetPlayerDataAsync(
+        public async Task<ActionResult<PlayerNameResponse?>> GetPlayerNameAsync(
             [FromQuery] string  playerId,
             [FromServices] ISessionService sessionService,
             [FromServices] IAccountService accountService)

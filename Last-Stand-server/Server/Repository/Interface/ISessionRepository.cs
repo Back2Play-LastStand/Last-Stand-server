@@ -9,4 +9,5 @@ public interface ISessionRepository
     Task<bool> HasValidSessionByAccountIdAsync(int accountId);
     Task DeleteExpiredSessionsAsync();
     Task DeleteSessionsAsync(string sessionId);
+    Task DeleteSessionsByAccountIdAsync(int accountId);
 }
