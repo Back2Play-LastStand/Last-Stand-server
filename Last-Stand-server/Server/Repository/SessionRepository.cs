@@ -19,8 +19,8 @@ public class SessionRepository : ISessionRepository
     public async Task CreateSessionAsync(AccountSession session)
     {
         const string sql = @"
-            INSERT INTO account_session (session_id, account_id, created_at, expires_at)
-            VALUES (@SessionId, @AccountId, @CreatedAt, @ExpiresAt);
+            INSERT INTO account_session (session_id, account_id, created_at, expired_at)
+            VALUES (@SessionId, @AccountId, @CreatedAt, @ExpiredAt);
             ";
         
         await using var connection  = CreateConnection();
@@ -35,9 +35,9 @@ public class SessionRepository : ISessionRepository
                 session_id AS SessionId, 
                 account_id AS AccountId, 
                 created_at AS CreatedAt, 
-                expires_at AS ExpiresAt 
+                expired_at AS ExpiredAt 
             FROM account_session
-            WHERE session_id = @SessionId AND expires_at > UTC_TIMESTAMP()";
+            WHERE session_id = @SessionId AND expired_at > UTC_TIMESTAMP()";
         
         await using var connection  = CreateConnection();
         
@@ -55,7 +55,7 @@ public class SessionRepository : ISessionRepository
     {
         const string sql = @"
             SELECT COUNT(*) FROM account_session
-            WHERE account_id = @AccountId AND expires_at > UTC_TIMESTAMP()";
+            WHERE account_id = @AccountId AND expired_at > UTC_TIMESTAMP()";
         
         await using var connection = CreateConnection();
         var count = await connection.ExecuteScalarAsync<int>(sql, new { AccountId = accountId });
@@ -66,7 +66,7 @@ public class SessionRepository : ISessionRepository
     {
         const string sql = @"
             DELETE FROM account_session
-            WHERE expires_at <= UTC_TIMESTAMP()";
+            WHERE expired_at <= UTC_TIMESTAMP()";
         
         await using var connection = CreateConnection();
         await connection.ExecuteAsync(sql);
